@@ -6,6 +6,8 @@ Social cards and thumbnails, built for [fiss.dev](https://fiss.dev) and usable a
 - **`fiss-studio/avatar`**: draws a [`@bible-strong`](https://www.npmjs.com/package/@bible-strong/avatar-core) avatar in a given expression as a plain SVG.
 - **`fiss-thumbs`**: a CLI for YouTube-style thumbnails (1280×720), from a `thumb:` block in each post's front matter. Runs offline, on your machine.
 
+How it all fits together, in French: [docs/fonctionnement.md](docs/fonctionnement.md).
+
 ## Install
 
 ```bash
