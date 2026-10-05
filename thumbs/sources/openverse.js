@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { cacheDir, download, getJson, magick, slug } from "../env.js";
+import sharp from "sharp";
+import { cacheDir, download, getJson, slug } from "../env.js";
 
 // CC0 and public-domain photos only, so nothing needs crediting on the image.
 export async function background(query, pick = 0) {
@@ -20,7 +21,7 @@ export async function background(query, pick = 0) {
     if (!hit) throw new Error(`no CC0 photo for "${query}" (pick ${pick})`);
     const raw = `${file}.src`;
     await download(hit.url, raw);
-    magick([raw, "-resize", "1600x>", "-quality", "85", file]);
+    await sharp(raw).resize({ width: 1600, withoutEnlargement: true }).jpeg({ quality: 85 }).toFile(file);
     fs.rmSync(raw);
     const { title, creator, license, foreign_landing_url: source } = hit;
     fs.writeFileSync(meta, JSON.stringify({ query, title, creator, license, source }, null, 2));

@@ -9,10 +9,10 @@ Social cards and thumbnails, built for [fiss.dev](https://fiss.dev) and usable a
 ## Install
 
 ```bash
-bun add github:0LrNx/fiss-studio#v0.2.0
+bun add github:0LrNx/fiss-studio#v0.2.1
 ```
 
-`sharp` is needed for JPEG output, and `@bible-strong/avatar-core` for `avatarSvg`. Both are optional peer dependencies.
+`@bible-strong/avatar-core` is needed for `avatarSvg`, as an optional peer dependency.
 
 ## Open Graph cards
 
@@ -48,12 +48,12 @@ const svg = await avatarSvg(definition, "suspicious-right", { body: "#f3f2ec", e
 
 ## Thumbnails
 
-Needs Chrome (or set `CHROME`), ImageMagick and, for cut-out characters, Python 3.
+Needs Chrome (or set `CHROME`) and, for cut-out characters, Python 3.
 
 ```bash
 fiss-thumbs setup                     # once: installs rembg for character cut-outs
 fiss-thumbs render --content src/content --out public/thumbs --avatar ombre.avatar.json
-fiss-thumbs pick yagami_light         # numbered sheet, to choose characterPick
+fiss-thumbs pick yagami_light         # sheet of candidates, each with its characterPost id
 ```
 
 Each post opts in with a `thumb:` block. Every field but `punch` is optional:
@@ -66,7 +66,7 @@ thumb:
   punch: VAULTWARDEN                 # the big line, fitted to its box
   ombre: suspicious-right            # an avatar expression (needs --avatar)…
   character: danbooru:yagami_light   # …or a cut-out character, or a PNG path
-  characterPick: 0
+  characterPost: 12303264           # pins one illustration (see `pick`); or characterPick: 0
   manga: { title: Death Note, volume: 1 }   # …or a MangaDex cover as a card
   logos: [bitwarden, docker]         # Simple Icons slugs
   bg: "search:server rack"           # a CC0 photo from Openverse, or an image path

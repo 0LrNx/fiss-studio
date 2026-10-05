@@ -12,7 +12,7 @@ const usage = `fiss-thumbs: YouTube-style thumbnails, 1280×720
   fiss-thumbs render --spec <file.json> --out <file.jpg> [--avatar <file.json>]
       one thumbnail from a spec file
   fiss-thumbs pick <danbooru-tag>
-      numbered sheet of illustrations, to choose \`characterPick\`
+      sheet of illustrations, each labelled with its \`characterPost\` id
   fiss-thumbs setup
       install rembg once, for \`character: danbooru:<tag>\`
 `;
