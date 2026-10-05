@@ -1,12 +1,18 @@
 {
   "name": "fiss-studio",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Social cards and thumbnails, built for fiss.dev and usable anywhere.",
   "type": "module",
   "license": "MIT",
   "exports": {
-    "./og": "./og/index.js",
-    "./avatar": "./og/avatar.js"
+    "./og": {
+      "types": "./og/index.d.ts",
+      "default": "./og/index.js"
+    },
+    "./avatar": {
+      "types": "./og/avatar.d.ts",
+      "default": "./og/avatar.js"
+    }
   },
   "files": [
     "og",
