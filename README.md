@@ -4,12 +4,12 @@ Social cards and thumbnails, built for [fiss.dev](https://fiss.dev) and usable a
 
 - **`fiss-studio/og`**: renders an Open Graph card (1200×630) from a title, a kicker and a mascot. [Satori](https://github.com/vercel/satori) + [resvg](https://github.com/yisibl/resvg-js), so it runs at build time with no browser.
 - **`fiss-studio/avatar`**: draws a [`@bible-strong`](https://www.npmjs.com/package/@bible-strong/avatar-core) avatar in a given expression as a plain SVG.
-- **Thumbnails** (YouTube-style, offline CLI): coming in `v0.2.0`.
+- **`fiss-thumbs`**: a CLI for YouTube-style thumbnails (1280×720), from a `thumb:` block in each post's front matter. Runs offline, on your machine.
 
 ## Install
 
 ```bash
-bun add github:0LrNx/fiss-studio#v0.1.0
+bun add github:0LrNx/fiss-studio#v0.2.0
 ```
 
 `sharp` is needed for JPEG output, and `@bible-strong/avatar-core` for `avatarSvg`. Both are optional peer dependencies.
@@ -45,6 +45,37 @@ import { avatarSvg } from "fiss-studio/avatar";
 
 const svg = await avatarSvg(definition, "suspicious-right", { body: "#f3f2ec", eyes: "#002fa7" });
 ```
+
+## Thumbnails
+
+Needs Chrome (or set `CHROME`), ImageMagick and, for cut-out characters, Python 3.
+
+```bash
+fiss-thumbs setup                     # once: installs rembg for character cut-outs
+fiss-thumbs render --content src/content --out public/thumbs --avatar ombre.avatar.json
+fiss-thumbs pick yagami_light         # numbered sheet, to choose characterPick
+```
+
+Each post opts in with a `thumb:` block. Every field but `punch` is optional:
+
+```yaml
+thumb:
+  style: loud                        # loud | calm
+  hook: NO BS                        # loud: the boxed line on top
+  kicker: Lab · Sep 2026             # calm: the mono line; defaults to shelf · month
+  punch: VAULTWARDEN                 # the big line, fitted to its box
+  ombre: suspicious-right            # an avatar expression (needs --avatar)…
+  character: danbooru:yagami_light   # …or a cut-out character, or a PNG path
+  characterPick: 0
+  manga: { title: Death Note, volume: 1 }   # …or a MangaDex cover as a card
+  logos: [bitwarden, docker]         # Simple Icons slugs
+  bg: "search:server rack"           # a CC0 photo from Openverse, or an image path
+  bgPick: 0
+```
+
+The output is `<out>/<shelf>/<id>.jpg`, plus `<out>/credits.json` listing where every fetched image came from. Downloads, cut-outs and rembg live in `~/.cache/fiss-studio` (`FISS_STUDIO_CACHE` to move it).
+
+Sources: [Openverse](https://openverse.org) (CC0 / public domain only), [Danbooru](https://danbooru.donmai.us) (general-rated, solo, simple background, cut out with rembg's `isnet-anime`), [MangaDex](https://mangadex.org) covers, [Simple Icons](https://simpleicons.org). Characters and covers are the rights holders' artwork: using them is your call.
 
 ## Development
 
