@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import { cacheDir, download, getJson, magick, slug } from "../env.js";
+import sharp from "sharp";
+import { cacheDir, download, getJson, slug } from "../env.js";
 
 const api = async (pathname, params) => {
   const url = new URL(pathname, "https://api.mangadex.org");
@@ -23,7 +24,7 @@ export async function cover({ title, volume, locale = "ja" }) {
   if (!found) throw new Error(`no cover for "${title}" volume ${volume}`);
   const raw = `${file}.src`;
   await download(`https://uploads.mangadex.org/covers/${manga.id}/${found.attributes.fileName}`, raw);
-  magick([raw, "-resize", "x900>", "-quality", "88", file]);
+  await sharp(raw).resize({ height: 900, withoutEnlargement: true }).jpeg({ quality: 88 }).toFile(file);
   fs.rmSync(raw);
   return file;
 }

@@ -10,24 +10,6 @@ export const cacheDir =
 
 export const userAgent = "fiss-studio (https://github.com/0LrNx/fiss-studio)";
 
-const which = (bin) => {
-  try {
-    execFileSync("which", [bin], { stdio: "ignore" });
-    return bin;
-  } catch {
-    return undefined;
-  }
-};
-
-// ImageMagick 7 ships `magick`; Ubuntu's 6 only has `convert` and `montage`.
-export const magick = (args) => {
-  const bin = which("magick");
-  if (bin) return execFileSync(bin, args);
-  const [first, ...rest] = args;
-  if (first === "montage") return execFileSync("montage", rest);
-  return execFileSync("convert", args);
-};
-
 const chromes = [
   process.env.CHROME,
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",

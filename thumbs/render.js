@@ -4,7 +4,8 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parse as parseYaml } from "yaml";
 import { avatarMarkup } from "../og/avatar.js";
-import { magick, screenshot } from "./env.js";
+import sharp from "sharp";
+import { screenshot } from "./env.js";
 import { background } from "./sources/openverse.js";
 import { character as danbooru } from "./sources/danbooru.js";
 import { cover } from "./sources/mangadex.js";
@@ -30,7 +31,7 @@ export async function renderThumb(spec, { out, avatar, base = process.cwd() }) {
 
   let character;
   if (spec.character?.startsWith("danbooru:")) {
-    const found = await danbooru(spec.character.slice(9).trim(), spec.characterPick);
+    const found = await danbooru(spec.character.slice(9).trim(), spec.characterPick, spec.characterPost);
     character = found.file;
     credits.character = found.credit;
   } else if (spec.character) character = local(spec.character);
@@ -62,7 +63,7 @@ export async function renderThumb(spec, { out, avatar, base = process.cwd() }) {
     fs.writeFileSync(page, html);
     screenshot(page, png, 1280, 720);
     fs.mkdirSync(path.dirname(out), { recursive: true });
-    magick([png, "-sampling-factor", "4:2:0", "-strip", "-quality", "80", out]);
+    await sharp(png).jpeg({ quality: 80, chromaSubsampling: "4:2:0" }).toFile(out);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
