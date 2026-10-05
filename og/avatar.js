@@ -13,7 +13,9 @@ export async function avatarSvg(definition, expression = "neutral", colors = {})
   const paths = (list) => list.filter(Boolean).map((d) => `<path d="${d}"/>`).join("");
   const eye = (d, visible) => (visible ? `<path d="${d}"/>` : "");
   return (
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-150 -150 300 300">` +
+    // The spikes reach past the definition's own -150…150 box; renderers that
+    // clip to the viewBox (resvg) would cut them off.
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-195 -195 390 390">` +
     `<defs><clipPath id="head"><path d="${g.headPath}"/></clipPath></defs>` +
     `<g fill="${body}">${paths(g.backPaths)}<path d="${g.headPath}"/></g>` +
     `<g fill="${eyes}" clip-path="url(#head)">${eye(g.leftPath, g.leftVisible)}${eye(g.rightPath, g.rightVisible)}</g>` +
