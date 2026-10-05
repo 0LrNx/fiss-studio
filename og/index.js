@@ -27,14 +27,22 @@ const el = (type, style, children = [], props = {}) => ({
   props: { style, children, ...props },
 });
 
-// "Break it in the *lab*." -> the starred words in the halo colour.
-const emphasis = (text, theme) =>
-  text
-    .split("*")
+// Satori trims the spaces at the edge of every text run, so the title is laid
+// out word by word with an explicit gap. "*lab*." keeps its "." on the word.
+const words = (text, theme) => {
+  let em = false;
+  return text
+    .split(/\s+/)
     .filter(Boolean)
-    .map((part, i) => (text.startsWith("*") ? i % 2 === 0 : i % 2 === 1)
-      ? el("span", { color: theme.halo }, part)
-      : part);
+    .map((word) => {
+      const parts = [];
+      word.split("*").forEach((piece, i) => {
+        if (i > 0) em = !em;
+        if (piece) parts.push(el("span", em ? { color: theme.halo } : {}, piece));
+      });
+      return el("div", { display: "flex" }, parts);
+    });
+};
 
 /**
  * @param {object} options
@@ -109,6 +117,7 @@ export async function renderOg({
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "center",
+          columnGap: (long ? 50 : 62) * 0.26,
           maxWidth: 980,
           textAlign: "center",
           fontFamily: "Display",
@@ -117,7 +126,7 @@ export async function renderOg({
           letterSpacing: -1,
           color: theme.paper,
         },
-        emphasis(title, theme),
+        words(title, theme),
       ),
     ].filter(Boolean),
   );
