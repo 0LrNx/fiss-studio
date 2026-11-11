@@ -62,18 +62,21 @@ Each post opts in with a `thumb:` block. Every field but `punch` is optional:
 
 ```yaml
 thumb:
-  style: loud                        # loud | calm
-  hook: NO BS                        # loud: the boxed line on top
+  style: loud                        # loud | calm | paper
+  hook: NO BS                        # loud: the boxed line on top; paper: the black line above the punch
   kicker: Lab · Sep 2026             # calm: the mono line; defaults to shelf · month
   punch: VAULTWARDEN                 # the big line, fitted to its box
   ombre: suspicious-right            # an avatar expression (needs --avatar)…
   character: danbooru:yagami_light   # …or a cut-out character, or a PNG path
+  side: left                         # paper: which side the character stands on (left | right)
   characterPost: 12303264           # pins one illustration (see `pick`); or characterPick: 0
   manga: { title: Death Note, volume: 1 }   # …or a MangaDex cover as a card
   logos: [bitwarden, docker]         # Simple Icons slugs
   bg: "search:server rack"           # a CC0 photo from Openverse, or an image path
   bgPick: 0
 ```
+
+`paper` is the plain one: crumpled print paper, the character in black and white with a red rim, the hook in black over a big red punch, the kicker as a small credit line. It ignores `bg`, `manga` and `ombre`; without a character it is a typographic card.
 
 The output is `<out>/<shelf>/<id>.jpg`, plus `<out>/credits.json` listing where every fetched image came from. Downloads, cut-outs and rembg live in `~/.cache/fiss-studio` (`FISS_STUDIO_CACHE` to move it).
 

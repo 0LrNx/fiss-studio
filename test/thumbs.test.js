@@ -24,6 +24,14 @@ test("renders a loud thumbnail from a spec", async () => {
   expect(isJpeg(file)).toBe(true);
 }, 30_000);
 
+test("renders a paper thumbnail, with and without a character", async () => {
+  const spec = { style: "paper", hook: "I never think of", punch: "Future", kicker: "Lab · Sep 2026" };
+  await renderThumb({ ...spec, character }, { out: `${out}paper.jpg` });
+  await renderThumb({ ...spec, character, side: "right" }, { out: `${out}paper-right.jpg` });
+  await renderThumb(spec, { out: `${out}paper-solo.jpg` });
+  for (const f of ["paper", "paper-right", "paper-solo"]) expect(isJpeg(`${out}${f}.jpg`)).toBe(true);
+}, 60_000);
+
 test("renders every post with a thumb block", async () => {
   const n = await renderContent({ content, out: `${out}content`, log: () => {} });
   expect(n).toBe(1);

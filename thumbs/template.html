@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@500;600&family=Poppins:wght@500;800;900&display=swap"
     />
     <style>
       :root {
@@ -210,6 +210,106 @@
         rotate: -12deg;
       }
 
+      /* --- paper ---------------------------------------------------------- */
+      /* Crumpled print paper, a black and white cut-out with a red rim, and a
+         heavy black-and-red title. No photo background: the paper is the set. */
+      .paper {
+        --red: #99000d;
+        --ink-black: #111113;
+        background: #e8e8e9;
+        font-family: "Poppins", "Arial Black", sans-serif;
+      }
+      .paper .crumple {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1280' height='720'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.005 .008' numOctaves='6' seed='7'/%3E%3CfeDiffuseLighting lighting-color='%23fff' surfaceScale='4.5'%3E%3CfeDistantLight azimuth='225' elevation='58'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+        mix-blend-mode: multiply;
+        opacity: 0.75;
+      }
+      .paper .grain {
+        mix-blend-mode: multiply;
+        opacity: 0.18;
+        filter: invert(1);
+      }
+      .paper .glow {
+        background: radial-gradient(75% 90% at 50% 45%, transparent 55%, rgb(0 0 0 / 0.12));
+      }
+      .paper .ombre.character {
+        position: absolute;
+        bottom: 0;
+        left: 30px;
+        width: 560px;
+        height: 690px;
+        /* Red rim on the back edge, then a soft red halo, as on a print. */
+        filter: drop-shadow(-10px 0 0 var(--red)) drop-shadow(-2px 0 14px rgb(153 0 13 / 0.55));
+      }
+      .paper .ombre.character img {
+        filter: grayscale(1) contrast(1.18) brightness(1.02);
+      }
+      .paper.side-right .ombre.character {
+        left: auto;
+        right: 30px;
+        filter: drop-shadow(10px 0 0 var(--red)) drop-shadow(2px 0 14px rgb(153 0 13 / 0.55));
+      }
+      .paper .copy {
+        position: absolute;
+        top: 50%;
+        right: 70px;
+        width: 640px;
+        translate: 0 -50%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .paper.side-right .copy {
+        right: auto;
+        left: 80px;
+      }
+      .paper.solo .copy {
+        right: auto;
+        left: 90px;
+        width: 1100px;
+      }
+      .paper .hook {
+        font-weight: 800;
+        font-size: 58px;
+        line-height: 0.95;
+        letter-spacing: -1px;
+        text-transform: uppercase;
+        color: var(--ink-black);
+      }
+      .paper .punch {
+        width: 100%;
+        font-weight: 900;
+        font-size: 170px;
+        line-height: 0.86;
+        letter-spacing: -3px;
+        text-transform: uppercase;
+        color: var(--red);
+        white-space: pre-line;
+      }
+      .paper .kicker {
+        margin-top: 8px;
+        font-weight: 500;
+        font-size: 26px;
+        color: #4a4a50;
+      }
+      .paper .kicker::before {
+        content: "– ";
+      }
+      .paper .logos {
+        display: flex;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      .paper .logo {
+        width: 52px;
+        height: 52px;
+        border: 2px solid rgb(17 17 19 / 0.25);
+      }
+      .paper .logo svg {
+        fill: var(--ink-black);
+      }
+
       /* --- calm ----------------------------------------------------------- */
       .calm {
         background: var(--pigment);
@@ -285,6 +385,9 @@
     <script>
       const s = window.SPEC;
       document.body.className = s.style;
+      if (s.style === "paper") {
+        document.body.classList.add(s.character ? `side-${s.side}` : "solo");
+      }
       const add = (cls, html = "") => {
         const el = document.createElement("div");
         el.className = cls;
@@ -292,17 +395,32 @@
         document.body.append(el);
         return el;
       };
-      if (s.bg) add("layer bg").style.backgroundImage = `url("${s.bg}")`;
+      const paper = s.style === "paper";
+      if (s.bg && !paper) add("layer bg").style.backgroundImage = `url("${s.bg}")`;
       if (s.bg && s.style === "loud") add("layer tint");
+      if (paper) add("layer crumple");
       add("layer glow");
       add("layer grain");
-      if (s.cover) {
+      if (paper) {
+        if (s.character) add("ombre character", `<img src="${s.character}" />`);
+      } else if (s.cover) {
         add(`cover${s.tint ? " duotone" : ""}`, `<img src="${s.cover}" />`);
       } else {
         if (s.character) add("ombre character", `<img src="${s.character}" />`);
         else add("ombre", s.ombre);
       }
-      const logos = add("logos");
+      // paper stacks hook / punch / kicker / logos in one column.
+      const copy = paper ? add("copy") : document.body;
+      const put = (cls) => {
+        const el = document.createElement("div");
+        el.className = cls;
+        copy.append(el);
+        return el;
+      };
+      if (paper && s.hook) put("hook").textContent = s.hook;
+      const punch = paper ? put("punch") : null;
+      if (paper && s.kicker) put("kicker").textContent = s.kicker;
+      const logos = paper ? put("logos") : add("logos");
       for (const svg of s.logos) {
         const l = document.createElement("div");
         l.className = "logo";
@@ -311,11 +429,12 @@
       }
       if (s.kicker && s.style === "calm") add("kicker").textContent = s.kicker;
       if (s.hook && s.style === "loud") add("hook").textContent = s.hook;
-      const punch = add("punch");
-      punch.textContent = s.punch;
+      const big = punch ?? add("punch");
+      big.textContent = s.punch;
       document.fonts.ready.then(() => {
+        const punch = big;
         let size = parseFloat(getComputedStyle(punch).fontSize);
-        const max = s.style === "calm" ? 420 : 300;
+        const max = s.style === "calm" ? 420 : paper ? 380 : 300;
         const fits = () => punch.scrollWidth <= punch.clientWidth && punch.offsetHeight <= max;
         while (size > 60 && !fits()) {
           punch.style.fontSize = `${(size -= 4)}px`;

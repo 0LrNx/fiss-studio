@@ -37,7 +37,9 @@ export async function renderThumb(spec, { out, avatar, base = process.cwd() }) {
   } else if (spec.character) character = local(spec.character);
 
   const coverFile = spec.manga ? await cover(spec.manga) : undefined;
-  const drawAvatar = !character && !coverFile;
+  // paper needs no figure: without a character it is a typographic card.
+  const paper = spec.style === "paper";
+  const drawAvatar = !paper && !character && !coverFile;
   if (drawAvatar && !avatar) throw new Error("nothing to show: pass --avatar, or set `character` or `manga`");
 
   const data = {
@@ -49,8 +51,9 @@ export async function renderThumb(spec, { out, avatar, base = process.cwd() }) {
     logos: await Promise.all((spec.logos ?? []).map(icon)),
     bg: url(bg),
     character: url(character),
-    cover: url(coverFile),
+    cover: paper ? undefined : url(coverFile),
     tint: spec.manga?.tint ?? true,
+    side: spec.side === "right" ? "right" : "left",
   };
   // `<` escaped so the SVG markup can never close the script early.
   const json = JSON.stringify(data).replace(/</g, "\\u003c");
